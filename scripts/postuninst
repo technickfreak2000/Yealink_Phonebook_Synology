@@ -1,0 +1,43 @@
+#!/bin/sh
+rm -rf /var/services/web/phonebook
+# rm /var/services/web/.htpasswd
+# rm /usr/local/etc/apache24/sites-enabled/httpd-vhost-phonebook.conf
+
+# rm -rf /usr/local/etc/certificate/WebStation/vhost_57dd5277-c05e-432f-a0bc-88174aef92bc
+# rm /usr/syno/etc/security-profile/tls-profile/config/vhost_57dd5277-c05e-432f-a0bc-88174aef92bc.conf
+
+# mv /var/tmp/nginx/app.d/server.webstation-vhost.conf.old /var/tmp/nginx/app.d/server.webstation-vhost.conf
+
+echo $pkgwizard_mysql_password > $$
+pkgwizard_mysql_password=`sed 's/"/\\"/gp' $$`
+/bin/rm -f $$
+
+if [ "$pkgwizard_remove_database_zurmo" = "true" ]; then
+    /usr/local/mariadb10/bin/mysql -u root --password="$pkgwizard_mysql_password" -e "DROP DATABASE phonebook";
+    if [ $? -eq 1 ]; then
+        if [ -z "$SYNOPKG_DSM_LANGUAGE" ]; then
+            echo "Fail to drop phonebook database." > $SYNOPKG_TEMP_LOGFILE
+        fi
+        case $SYNOPKG_DSM_LANGUAGE in
+             *)
+            echo "Fail to drop phonebook database." > $SYNOPKG_TEMP_LOGFILE 
+             ;;
+        esac
+    fi
+fi
+
+if [ "$pkgwizard_remove_user_zurmo" = "true" ]; then
+    /usr/local/mariadb10/bin/mysql -u root --password="$pkgwizard_mysql_password" -e "DROP USER 'phonebook'@'localhost'";
+    if [ $? -eq 1 ]; then
+        if [ -z "$SYNOPKG_DSM_LANGUAGE" ]; then
+            echo "Fail to drop phonebook user." > $SYNOPKG_TEMP_LOGFILE
+        fi
+        case $SYNOPKG_DSM_LANGUAGE in
+             *)
+            echo "Fail to drop phonebook user." > $SYNOPKG_TEMP_LOGFILE 
+             ;;
+        esac
+    fi
+fi
+
+exit 0

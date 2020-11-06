@@ -1,0 +1,59 @@
+[{
+    "step_title": "Create phonebook user & database on MariaDB10",
+    "items": [{
+        "type": "multiselect",
+        "desc": "Dont forget to enable TCP/IP connection in MariaDB10 settings!",
+        "subitems": [{
+            "key": "doneit",
+            "desc": "Done it"
+        }]
+    },{
+        "type": "multiselect",
+        "desc": "After installation, please create a virtualhost with webstation!",
+        "subitems": [{
+            "key": "doneitit",
+            "desc": "Do it"
+        }]
+    }]
+}, {
+    "step_title": "Create phonebook user on MariaDB10",
+    "items": [{
+        "type": "multiselect",
+        "desc": "Do you want to create phonebook user?",
+        "subitems": [{
+            "key": "pkgwizard_create_user_zurmo",
+            "desc": "Create phonebook user"
+        }]
+    }, {
+        "type": "password",
+        "desc": "Please provide a password to create phonebook user.",
+        "subitems": [{
+            "key": "pkgwizard_mysql_password_user",
+            "desc": "MariaDB phonebook password"
+        }]
+    },{
+        "type": "password",
+        "desc": "Please provide root password to create phonebook user.",
+        "subitems": [{
+            "key": "pkgwizard_mysql_password",
+            "desc": "MariaDB root password"
+        }]
+    }]
+}, {
+    "step_title": "Create phonebook database on MariaDB10",
+    "items": [{
+        "type": "multiselect",
+        "desc": "Do you want to create phonebook database?",
+        "subitems": [{
+            "key": "pkgwizard_create_database_zurmo",
+            "desc": "Create phonebook database"
+        }]
+    }, {
+        "type": "password",
+        "desc": "Please provide root password to create phonebook database.",
+        "subitems": [{
+            "key": "pkgwizard_mysql_password",
+            "desc": "MariaDB root password"
+        }]
+    }]
+}]

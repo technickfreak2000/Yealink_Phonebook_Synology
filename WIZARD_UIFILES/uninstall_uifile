@@ -1,0 +1,23 @@
+[{
+    "_comment": "Remove phonebook database wizard.",
+ 
+    "step_title": "Remove phonebook database & user on MariaDB10",
+    "items": [{
+        "type": "multiselect",
+        "desc": "If you remove phonebook database, all contents will be deleted.",
+        "subitems": [{
+            "key": "pkgwizard_remove_database_zurmo",
+            "desc": "Remove zurmo database"
+        },{
+            "key": "pkgwizard_remove_user_zurmo",
+            "desc": "Remove zurmo database"
+        }]
+    }, {
+        "type": "password",
+        "desc": "Please provide root password to remove phonebook database.",
+        "subitems": [{
+            "key": "pkgwizard_mysql_password",
+            "desc": "MariaDB root password"
+        }]
+    }]
+}]

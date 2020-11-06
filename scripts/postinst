@@ -1,0 +1,57 @@
+#!/bin/sh
+mv /var/packages/YealinkPhonebook/target/phonebook /var/services/web/
+chown -R 1023:1023 /var/services/web/phonebook
+# htpasswd -b -c /var/services/web/.htpasswd admin 123456789
+# chown -R 1023:1023 /var/services/web/.htpasswd
+# mv /var/packages/YealinkPhonebook/target/httpd-vhost-phonebook.conf /usr/local/etc/apache24/sites-enabled/
+
+# mkdir /usr/local/etc/certificate/WebStation/vhost_57dd5277-c05e-432f-a0bc-88174aef92bc
+# mv /var/packages/YealinkPhonebook/target/fullchain.pem /usr/local/etc/certificate/WebStation/vhost_57dd5277-c05e-432f-a0bc-88174aef92bc/
+# mv /var/packages/YealinkPhonebook/target/privkey.pem /usr/local/etc/certificate/WebStation/vhost_57dd5277-c05e-432f-a0bc-88174aef92bc/
+# mv /var/packages/YealinkPhonebook/target/vhost_57dd5277-c05e-432f-a0bc-88174aef92bc.conf /usr/syno/etc/security-profile/tls-profile/config/
+
+# cp /var/tmp/nginx/app.d/server.webstation-vhost.conf /var/tmp/nginx/app.d/server.webstation-vhost.conf.old
+# cat /var/packages/YealinkPhonebook/target/server.conf >> /var/tmp/nginx/app.d/server.webstation-vhost.conf
+# rm /var/packages/YealinkPhonebook/target/server.conf
+
+echo $pkgwizard_mysql_password > $$
+pkgwizard_mysql_password=`sed 's/"/\\"/gp' $$`
+/bin/rm -f $$
+
+echo $pkgwizard_mysql_password_user > $$
+pkgwizard_mysql_password_user=`sed 's/"/\\"/gp' $$`
+/bin/rm -f $$
+
+if [ "$pkgwizard_create_user_zurmo" = "true" ]; then
+    /usr/local/mariadb10/bin/mysql -u root --password="$pkgwizard_mysql_password" -e "CREATE USER 'phonebook'@'localhost' IDENTIFIED BY '${pkgwizard_mysql_password_user}';GRANT USAGE ON *.* TO 'phonebook'@'localhost' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;GRANT ALL PRIVILEGES ON phonebook.* TO 'phonebook'@'localhost';";
+    if [ $? -eq 1 ]; then
+        if [ -z "$SYNOPKG_DSM_LANGUAGE" ]; then
+            echo "Fail to create phonebook user." > $SYNOPKG_TEMP_LOGFILE
+            exit 0
+        fi
+        case $SYNOPKG_DSM_LANGUAGE in
+             *)
+            echo "Fail to create phonebook user." > $SYNOPKG_TEMP_LOGFILE 
+             ;;
+        esac
+        exit 0
+    fi
+fi
+
+if [ "$pkgwizard_create_database_zurmo" = "true" ]; then
+    /usr/local/mariadb10/bin/mysql -u root --password="$pkgwizard_mysql_password" -e "CREATE DATABASE phonebook COLLATE = utf8_unicode_ci";
+    if [ $? -eq 1 ]; then
+        if [ -z "$SYNOPKG_DSM_LANGUAGE" ]; then
+            echo "Fail to create phonebook database." > $SYNOPKG_TEMP_LOGFILE
+            exit 0
+        fi
+        case $SYNOPKG_DSM_LANGUAGE in
+             *)
+            echo "Fail to create phonebook database." > $SYNOPKG_TEMP_LOGFILE 
+             ;;
+        esac
+        exit 0
+    fi
+fi
+
+exit 0

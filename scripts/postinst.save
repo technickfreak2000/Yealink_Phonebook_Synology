@@ -1,0 +1,63 @@
+#!/bin/sh
+mv /var/packages/YealinkPhonebook/target/phonebook /var/services/web/
+chown -R 1023:1023 /var/services/web/phonebook
+
+mv Alias /_webstation_/ "/var/packages/WebStation/target/error_page/"
+ErrorDocument 400 /_webstation_/400.html
+ErrorDocument 401 /_webstation_/401.html
+ErrorDocument 402 /_webstation_/402.html
+ErrorDocument 403 /_webstation_/403.html
+ErrorDocument 404 /_webstation_/404.html
+ErrorDocument 405 /_webstation_/405.html
+ErrorDocument 406 /_webstation_/406.html
+ErrorDocument 407 /_webstation_/407.html
+ErrorDocument 408 /_webstation_/408.html
+ErrorDocument 500 /_webstation_/500.html
+ErrorDocument 501 /_webstation_/501.html
+ErrorDocument 502 /_webstation_/502.html
+ErrorDocument 503 /_webstation_/503.html
+ErrorDocument 504 /_webstation_/504.html
+ErrorDocument 505 /_webstation_/505.html
+
+<VirtualHost *:99>
+    DocumentRoot "/volume1/web/phonebook"
+    <IfModule dir_module>
+        DirectoryIndex  index.html index.htm index.cgi index.php index.php5
+    </IfModule>
+    <Directory "/volume1/web/phonebook">
+        Options MultiViews FollowSymLinks ExecCGI
+        AllowOverride All
+        <IfModule authz_core_module>
+            Require all granted
+        </IfModule>
+    </Directory>
+
+    <FilesMatch "\.(php[345]?|phtml)$">
+        SetHandler "proxy:unix:/run/php-fpm/php-c955c07d-aa67-4013-bcda-4189fb9a1f34.sock|fcgi://localhost"
+
+    </FilesMatch>
+</VirtualHost>
+
+
+
+echo $pkgwizard_mysql_password > $$
+pkgwizard_mysql_password=`sed 's/"/\\"/gp' $$`
+/bin/rm -f $$
+
+if [ "$pkgwizard_create_database_zurmo" = "true" ]; then
+    /usr/local/mariadb10/bin/mysql -u root --password="$pkgwizard_mysql_password" -e "CREATE DATABASE phonebook COLLATE = utf8_unicode_ci";
+    if [ $? -eq 1 ]; then
+        if [ -z "$SYNOPKG_DSM_LANGUAGE" ]; then
+            echo "Fail to create phonebook database." > $SYNOPKG_TEMP_LOGFILE
+            exit 0
+        fi
+        case $SYNOPKG_DSM_LANGUAGE in
+             *)
+            echo "Fail to create phonebook database." > $SYNOPKG_TEMP_LOGFILE 
+             ;;
+        esac
+        exit 0
+    fi
+fi
+
+exit 0
